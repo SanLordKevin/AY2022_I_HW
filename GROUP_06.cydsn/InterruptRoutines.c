@@ -45,7 +45,7 @@ CY_ISR(Custom_ISR_ADC)
     if ( slaveBuffer[CONTROL_REG0] == 0x01 )
     {
        status=1;
-       Pin_LED_Write(0);
+       Pin_LED_Write(1);
     };
     
     if ( slaveBuffer[CONTROL_REG0] == 0x10 )
@@ -66,14 +66,15 @@ CY_ISR(Custom_ISR_ADC)
     counter_TR++;
 //select the Temp channel   RISOLVERE PROBLEMA SENSORE DIFETTOSO
 
-/*if (status==1 || status==3 ){
+if (status==1 || status==3 ){
 AMux_FastSelect(CH_TEMP) ;
 // Read Timer status register to bring interrupt line low
 value_digit = ADC_DelSig_Read32();
 if (value_digit < 0) value_digit = 0;
 if (value_digit > 65535) value_digit = 65535;
-value_temp = ADC_DelSig_CountsTo_mVolts(value_digit)/10;// the sensibility is 10 mV\c
-Temp_mean=Temp_mean+value_ph;}*/
+value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);// the sensibility is 10 mV\c
+Temp_mean=Temp_mean+value_temp;}
+
 
 if (status==2 || status==3 ){
 //select the Photodiode channel
@@ -89,14 +90,22 @@ Ph_mean=Ph_mean+value_ph;}
 if (counter_SP==NUMBER_OF_SAMPLES){
 // Format ADC result for transmition
 Ph_mean=Ph_mean/NUMBER_OF_SAMPLES; //average of 5 samples
-//Temp_mean=Temp_mean/NUMBER_OF_SAMPLES;
+Temp_mean=Temp_mean/NUMBER_OF_SAMPLES;
 // Write bytes in buffer
 DataBufferPh[1] = Ph_mean >> 8;
-DataBufferPh[2] = Ph_mean & 0xFF;}
+DataBufferPh[2] = Ph_mean & 0xFF;
+
+DataBufferTemp[1] = Temp_mean >> 8;
+DataBufferTemp[2] = Temp_mean & 0xFF;
+
+DataBufferDouble[1] = Ph_mean >> 8;
+DataBufferDouble[2] = Ph_mean & 0xFF;
+DataBufferDouble[3] = Temp_mean >> 8;
+DataBufferDouble[4] = Temp_mean & 0xFF;
+counter_SP=0;}
 
 if (counter_TR==TRANSMISSION){
 PacketReadyFlag=1;
-counter_SP=0;
 counter_TR=0;
 Temp_mean=0;
 Ph_mean=0;}

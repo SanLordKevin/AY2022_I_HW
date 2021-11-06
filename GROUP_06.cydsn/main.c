@@ -32,11 +32,15 @@ isr_ADC_StartEx(Custom_ISR_ADC);
 Pin_LED_Write(0);
 // Set up header and tail of Ph sensor buffer
 DataBufferPh[0] = 0xA0;
-DataBufferPh[TRANSMIT_BUFFER_SIZE-1] = 0xC0;
+DataBufferPh[TRANSMIT_BUFFER_SIZE_SINGLE-1] = 0xC0;
 
 // Set up header and tail of Temp sensor buffer
-DataBufferTemp[0] = 0xA1;
-DataBufferTemp[TRANSMIT_BUFFER_SIZE-1] = 0xC1;
+DataBufferTemp[0] = 0xA0;
+DataBufferTemp[TRANSMIT_BUFFER_SIZE_SINGLE-1] = 0xC0;
+
+// Set up header and tail of sensors buffer
+DataBufferDouble[0] = 0xA0;
+DataBufferDouble[TRANSMIT_BUFFER_SIZE_DOUBLE-1] = 0xC0;
 
 // Initialize send flag
 PacketReadyFlag = 0;
@@ -57,12 +61,16 @@ EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
 for(;;){
 if (PacketReadyFlag==1){
 // Send out the data
-if (status==2 || status==3 ){
-UART_PutArray(DataBufferPh, TRANSMIT_BUFFER_SIZE);
+if (status==2 ){
+UART_PutArray(DataBufferPh, TRANSMIT_BUFFER_SIZE_SINGLE);
 PacketReadyFlag=0;};
 
-if (status==1 || status==3 ){
-UART_PutArray(DataBufferTemp, TRANSMIT_BUFFER_SIZE);
+if (status==1){
+UART_PutArray(DataBufferTemp, TRANSMIT_BUFFER_SIZE_SINGLE);
+PacketReadyFlag=0;};
+
+if (status==3){
+UART_PutArray(DataBufferDouble, TRANSMIT_BUFFER_SIZE_DOUBLE);
 PacketReadyFlag=0;};
 }
 }
