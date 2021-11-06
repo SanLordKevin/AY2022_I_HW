@@ -15,7 +15,7 @@
 
     /*Define your macro callbacks here */
     /*For more information, refer to the Writing Code topic in the PSoC Creator Help.*/
-
+void EZI2C_ISR_ExitCallback(void);
     
 #endif /* CYAPICALLBACKS_H */   
 /* [] */
