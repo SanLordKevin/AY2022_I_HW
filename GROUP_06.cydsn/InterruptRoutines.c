@@ -34,10 +34,36 @@ extern uint8_t slaveBuffer[];
 
 CY_ISR(Custom_ISR_ADC)
 {Timer_ADC_ReadStatusRegister();
+
+// Update status
+    if ( slaveBuffer[CONTROL_REG0] == 0x00 )
+    {
+       status=0;
+       Pin_LED_Write(0);
+    };
+    
+    if ( slaveBuffer[CONTROL_REG0] == 0x01 )
+    {
+       status=1;
+       Pin_LED_Write(0);
+    };
+    
+    if ( slaveBuffer[CONTROL_REG0] == 0x10 )
+    {
+       status=2;
+       Pin_LED_Write(1);
+    };
+    
+    if ( slaveBuffer[CONTROL_REG0] == 0x11 )
+    {
+       status=3;
+       Pin_LED_Write(1);
+    }; 
  // Increment counter in slave buffer
     slaveBuffer[CONTROL_REG1]++;
  //conteggio campioni effettuati
     counter_SP++;
+    counter_TR++;
 //select the Temp channel   RISOLVERE PROBLEMA SENSORE DIFETTOSO
 
 /*if (status==1 || status==3 ){
@@ -53,7 +79,6 @@ if (status==2 || status==3 ){
 //select the Photodiode channel
 AMux_FastSelect(CH_PH) ;
 // Read Timer status register to bring interrupt line low
-
 value_digit = ADC_DelSig_Read32();
 if (value_digit < 0) value_digit = 0;
 if (value_digit > 65535) value_digit = 65535;
@@ -84,30 +109,7 @@ Ph_mean=0;}
 */
 void EZI2C_ISR_ExitCallback(void)
 {
-  // Update status
-    if ( slaveBuffer[CONTROL_REG0] == 0x00 )
-    {
-       status=0;
-       Pin_LED_Write(0);
-    };
-    
-    if ( slaveBuffer[CONTROL_REG0] == 0x01 )
-    {
-       status=1;
-       Pin_LED_Write(0);
-    };
-    
-    if ( slaveBuffer[CONTROL_REG0] == 0x10 )
-    {
-       status=2;
-       Pin_LED_Write(0);
-    };
-    
-    if ( slaveBuffer[CONTROL_REG0] == 0x11 )
-    {
-       status=3;
-       Pin_LED_Write(1);
-    }; 
+  
 }
 
 /* [] END OF FILE */
