@@ -21,6 +21,7 @@
     
 CY_ISR_PROTO (Custom_ISR_ADC);
 
+CY_ISR_PROTO (Custom_ISR_DATA);
 
 uint8_t DataBufferPh[TRANSMIT_BUFFER_SIZE_SINGLE];
 uint8_t DataBufferTemp[TRANSMIT_BUFFER_SIZE_SINGLE];

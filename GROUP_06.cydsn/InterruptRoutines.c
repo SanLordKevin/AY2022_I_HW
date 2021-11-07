@@ -27,56 +27,55 @@ int32 value_ph;
 int32 Temp_mean;
 int32 Ph_mean;
 int32 counter_SP=0; //counter dei campioni
-int32 counter_TR=0; //counter della trasmissione
-int32 TRANSMISSION=20;
+
 #define STATO0 0b00010100   //in exadecimale 14 SONO I COMANDI DA INSERIRE NEL BRIDGE CONTROL
 #define STATO1 0b00010101   //in exadecimale 15
 #define STATO2 0b00010110   //in exadecimale 16
 #define STATO3 0b00010111   //in exadecimale 17
 
-int c=0;
-int x=1;
 
 // Our global variables
 extern uint8_t status;
 extern uint8_t slaveBuffer[]; 
 CY_ISR(Custom_ISR_ADC)
-{Timer_ADC_ReadStatusRegister();
+{
+    Timer_ADC_ReadStatusRegister();
 
 // Update status
-   if ( slaveBuffer[CONTROL_REG0] == STATO0  )
+   if ( slaveBuffer[CONTROL_REG0] == STATO0 && status!=0 )
     {
        status=0;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO1  ) 
+    if ( slaveBuffer[CONTROL_REG0] == STATO1 && status!=1 ) 
     {
        status=1;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO2  ) 
+    if ( slaveBuffer[CONTROL_REG0] == STATO2 && status!=2 ) 
     {
        status=2;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO3 ) 
+    if ( slaveBuffer[CONTROL_REG0] == STATO3 && status!=3) 
     
     {
        status=3;
        Pin_LED_Write(1);
     }; 
- // Increment counter in slave buffer
+
    
  //conteggio campioni effettuati
     counter_SP++;
-    counter_TR++;
-    c++;
-    if(c%50==0){Pin_LED_Write(x); 
-             if(x==0){x=1;}
-            else{x=0;}}
+    
+    //c++;
+    //if(c%50==0){Pin_LED_Write(x); 
+    //        if(x==0){x=1;}
+    //        else{x=0;}}
+    
 //select the Temp channel   RISOLVERE PROBLEMA SENSORE DIFETTOSO
 
 if (status==1 || status==3 ){
@@ -118,23 +117,31 @@ DataBufferDouble[1] = Ph_mean >> 8;
 DataBufferDouble[2] = Ph_mean & 0xFF;
 DataBufferDouble[3] = Temp_mean >> 8;
 DataBufferDouble[4] = Temp_mean & 0xFF;
-counter_SP=0;}
-
-if (counter_TR==20){
-PacketReadyFlag=1;
-counter_TR=0;
+counter_SP=0;
 Temp_mean=0;
-Ph_mean=0;}
+Ph_mean=0;
 }
 
-
-/**
-*   This function is called when exiting the EZI2C_ISR. Here we
-*   perform all the tasks based on the requests.
-*/
-void EZI2C_ISR_ExitCallback(void)
-{
-  
 }
+
+CY_ISR(Custom_ISR_DATA){
+    
+
+    if (status==2 ){
+        UART_PutArray(DataBufferPh, TRANSMIT_BUFFER_SIZE_SINGLE);
+        PacketReadyFlag=0;};
+
+    if (status==1){
+        UART_PutArray(DataBufferTemp, TRANSMIT_BUFFER_SIZE_SINGLE);
+        PacketReadyFlag=0;};
+
+    if (status==3){
+        UART_PutArray(DataBufferDouble, TRANSMIT_BUFFER_SIZE_DOUBLE);
+        PacketReadyFlag=0;};
+    
+    
+}
+    
+
 
 /* [] END OF FILE */
