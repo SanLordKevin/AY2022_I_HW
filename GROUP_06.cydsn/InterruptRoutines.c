@@ -14,7 +14,8 @@
 #define NUMBER_OF_SAMPLES 5
 #define CONTROL_REG0 0
 #define CONTROL_REG1 1
-#define TRANSMISSION 20 //ogni 20 interrupt trasmetto il dato
+
+
 // Include header
 #include "InterruptRoutines.h"
 // Include required header files
@@ -27,43 +28,55 @@ int32 Temp_mean;
 int32 Ph_mean;
 int32 counter_SP=0; //counter dei campioni
 int32 counter_TR=0; //counter della trasmissione
+int32 TRANSMISSION=20;
+#define STATO0 0b00010100   //in exadecimale 14 SONO I COMANDI DA INSERIRE NEL BRIDGE CONTROL
+#define STATO1 0b00010101   //in exadecimale 15
+#define STATO2 0b00010110   //in exadecimale 16
+#define STATO3 0b00010111   //in exadecimale 17
+
+int c=0;
+int x=1;
 
 // Our global variables
 extern uint8_t status;
-extern uint8_t slaveBuffer[];
-
+extern uint8_t slaveBuffer[]; 
 CY_ISR(Custom_ISR_ADC)
 {Timer_ADC_ReadStatusRegister();
 
 // Update status
-    if ( slaveBuffer[CONTROL_REG0] == 0x00 )
+   if ( slaveBuffer[CONTROL_REG0] == STATO0  )
     {
        status=0;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == 0x01 )
+    if ( slaveBuffer[CONTROL_REG0] == STATO1  ) 
     {
        status=1;
-       Pin_LED_Write(1);
+       Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == 0x10 )
+    if ( slaveBuffer[CONTROL_REG0] == STATO2  ) 
     {
        status=2;
-       Pin_LED_Write(1);
+       Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == 0x11 )
+    if ( slaveBuffer[CONTROL_REG0] == STATO3 ) 
+    
     {
        status=3;
        Pin_LED_Write(1);
     }; 
  // Increment counter in slave buffer
-    slaveBuffer[CONTROL_REG1]++;
+   
  //conteggio campioni effettuati
     counter_SP++;
     counter_TR++;
+    c++;
+    if(c%50==0){Pin_LED_Write(x); 
+             if(x==0){x=1;}
+            else{x=0;}}
 //select the Temp channel   RISOLVERE PROBLEMA SENSORE DIFETTOSO
 
 if (status==1 || status==3 ){
@@ -84,7 +97,10 @@ value_digit = ADC_DelSig_Read32();
 if (value_digit < 0) value_digit = 0;
 if (value_digit > 65535) value_digit = 65535;
 value_ph= ADC_DelSig_CountsTo_mVolts(value_digit);//da trovare il datasheet
-Ph_mean=Ph_mean+value_ph;}
+Ph_mean=Ph_mean+value_ph;
+
+
+}
 
 
 if (counter_SP==NUMBER_OF_SAMPLES){
@@ -104,7 +120,7 @@ DataBufferDouble[3] = Temp_mean >> 8;
 DataBufferDouble[4] = Temp_mean & 0xFF;
 counter_SP=0;}
 
-if (counter_TR==TRANSMISSION){
+if (counter_TR==20){
 PacketReadyFlag=1;
 counter_TR=0;
 Temp_mean=0;
