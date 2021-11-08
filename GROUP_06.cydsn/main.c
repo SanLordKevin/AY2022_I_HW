@@ -17,6 +17,10 @@
 #define POS_WHO_AM_I 2 //poizione nello slave del registro who am i
 #define CONTROL_REG0 0
 #define CONTROL_REG1 1
+#define CH0_MSB 3
+#define CH0_LSB 4
+#define CH1_MSB 5
+#define CH1_LSB 6
 
 
 uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; ///< Buffer for the slave device
@@ -40,7 +44,6 @@ int main(void){
     EZI2C_Start();
     PGA_TEMP_Start();
     isr_ADC_StartEx(Custom_ISR_ADC);
-    isr_DATA_StartEx(Custom_ISR_DATA);
 
     Timer_ADC_Start();
     Timer_DATA_Start();
@@ -71,7 +74,16 @@ int main(void){
     
     // Set up who am i register
     slaveBuffer[POS_WHO_AM_I] = 0xBC;
-
+    
+    //Set to zero registers of the variables
+    slaveBuffer[CH0_MSB] = 0xFF;
+    slaveBuffer[CH0_LSB] = 0x22;
+    
+    slaveBuffer[CH1_MSB] = 0xFF;
+    slaveBuffer[CH1_LSB] = 0x22;
+    
+    
+    
     // Set up EZI2C buffer
     EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
     // Set up control register 1
