@@ -14,11 +14,11 @@
 #define NUMBER_OF_SAMPLES 5
 #define CONTROL_REG0 0
 #define CONTROL_REG1 1
-#define STATO0 0b00010100   //in exadecimale 14 SONO I COMANDI DA INSERIRE NEL BRIDGE CONTROL
-#define STATO1 0b00010101   //in exadecimale 15
-#define STATO2 0b00010110   //in exadecimale 16
-#define STATO3 0b00010111   //in exadecimale 17
-
+#define STATO0 0b00010100   //This is 14 in exidecimal notation 
+#define STATO1 0b00010101   //This is 15 in exidecimal notation 
+#define STATO2 0b00010110   //This is 16 in exidecimal notation 
+#define STATO3 0b00010111   //This is 17 in exidecimal notation 
+//To select the status you write in the control register 0 in exidecimal notation using bridge control
 
 // Include header
 #include "InterruptRoutines.h"
@@ -63,14 +63,13 @@ CY_ISR(Custom_ISR_ADC)
     };
     
     if ( slaveBuffer[CONTROL_REG0] == STATO3 && status!=3 ) 
-    
     {
        status=3;
        Pin_LED_Write(1);
     }; 
 
    
-     //conteggio campioni effettuati
+     //incremental counter of the sample effectuated
     counter_SP++;
     
     
@@ -85,7 +84,7 @@ CY_ISR(Custom_ISR_ADC)
             value_digit = 0;
         if (value_digit > 65535) 
             value_digit = 65535;
-        value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);// the sensibility is 10 mV\c
+        value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);
         Temp_mean=Temp_mean+value_temp;
     }
 
@@ -113,10 +112,11 @@ CY_ISR(Custom_ISR_ADC)
         Temp_mean=Temp_mean/NUMBER_OF_SAMPLES;
         
         // Write bytes in buffer
-        slaveBuffer[CH0_MSB] = Ph_mean >> 8;
-        slaveBuffer[CH0_LSB] = Ph_mean & 0xFF;
-        slaveBuffer[CH1_MSB] = Temp_mean >> 8;
-        slaveBuffer[CH1_LSB] = Temp_mean & 0xFF;
+        slaveBuffer[CH0_MSB] = Temp_mean >> 8;
+        slaveBuffer[CH0_LSB] = Temp_mean & 0xFF;
+        slaveBuffer[CH1_MSB] = Ph_mean >> 8;
+        slaveBuffer[CH1_LSB] = Ph_mean & 0xFF;
+        
         counter_SP=0;
         Temp_mean=0;
         Ph_mean=0;

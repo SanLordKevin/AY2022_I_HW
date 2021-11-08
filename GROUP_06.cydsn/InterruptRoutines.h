@@ -17,10 +17,10 @@
     #define TRANSMIT_BUFFER_SIZE_DOUBLE 1+BYTE_TO_SEND_DOUBLE+1
     #define BYTE_TO_SEND_SINGLE 2
     #define TRANSMIT_BUFFER_SIZE_SINGLE 1+BYTE_TO_SEND_SINGLE+1
-    #define CH0_MSB 3
-    #define CH0_LSB 4
-    #define CH1_MSB 5
-    #define CH1_LSB 6
+    #define CH0_MSB 3 //where i save the mean temp
+    #define CH0_LSB 4 //where i save the mean temp
+    #define CH1_MSB 5 //where i save the mean lux
+    #define CH1_LSB 6 //where i save the mean lux
 
     CY_ISR_PROTO (Custom_ISR_ADC);
 
