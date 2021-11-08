@@ -9,14 +9,13 @@
 #include "InterruptRoutines.h"
 
 #define SLAVE_BUFFER_SIZE 8
-#define POS_WHO_AM_I 2 //poizione nello slave del registro who am i
 #define CONTROL_REG0 0
 #define CONTROL_REG1 1
+#define POS_WHO_AM_I 2 //register who am i address
 
-
-uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; ///< Buffer for the slave device
-uint8_t status=0; ///control status 0)spento 1)CH temp on 2)CH ph on 3) Both on
-int16 period=10; //variabile per leggere il control register 1 con il periodo del timer all'interno 
+uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; /// Buffer for the slave device
+uint8_t status=0; ///control status 0)off 1)CH temp on 2)CH ph on 3) Both on
+int16 period=10; //variable that read from the control register 1 the period of the sampling
 
 int main(void){
     CyGlobalIntEnable; // Enable global interrupts. 
@@ -32,8 +31,9 @@ int main(void){
     ADC_DelSig_StartConvert(); 
 
     // Set up Slave Buffer
-    slaveBuffer[CONTROL_REG0] = 0b00010100; //primi 2 bit servono per cambiareclo stato, i bit dal 2 al 5 invece rappresentano il numero di campion usati per la media
-                                            //qui imposto che non manda nessun dato, metto status bit a 00
+    slaveBuffer[CONTROL_REG0] = 0b00010100; //bit[1:0]-->STATUS (default status is 00)
+                                            //bit[5:2]-->NUMER OF SAMPLES FOR THE MEAN
+                                            
     
     // Set up who am i register
     slaveBuffer[POS_WHO_AM_I] = 0xBC;
@@ -55,12 +55,12 @@ int main(void){
 
     for(;;)
     {
-    // salvo cosa c'è scritto nel registro nella var
-
-        if (period != slaveBuffer[CONTROL_REG1]){
-            period=10*slaveBuffer[CONTROL_REG1];
-            Timer_ADC_WritePeriod(period);
-        }
+        if (period != slaveBuffer[CONTROL_REG1]) //control if the period has changed
+          {
+            period=10*slaveBuffer[CONTROL_REG1]; //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
+                                                 //With a clock set at 10 kHz to have an interrupt every 1ms you set the period of the timer to 10
+            Timer_ADC_WritePeriod(period);       //set the new period
+          }
     
     }
 }   
