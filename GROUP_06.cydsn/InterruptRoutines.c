@@ -120,25 +120,7 @@ Ph_mean=0;
 }
 
 }
-
-CY_ISR(Custom_ISR_DATA){
-    
-
-    if (status==2 ){
-        UART_PutArray(DataBufferPh, TRANSMIT_BUFFER_SIZE_SINGLE);
-        PacketReadyFlag=0;};
-
-    if (status==1){
-        UART_PutArray(DataBufferTemp, TRANSMIT_BUFFER_SIZE_SINGLE);
-        PacketReadyFlag=0;};
-
-    if (status==3){
-        UART_PutArray(DataBufferDouble, TRANSMIT_BUFFER_SIZE_DOUBLE);
-        PacketReadyFlag=0;};
-    
-    
-}
-    
+ 
 
 
 /* [] END OF FILE */
