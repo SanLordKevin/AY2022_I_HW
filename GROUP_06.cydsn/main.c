@@ -17,10 +17,7 @@
 #define POS_WHO_AM_I 2 //poizione nello slave del registro who am i
 #define CONTROL_REG0 0
 #define CONTROL_REG1 1
-#define CH0_MSB 3
-#define CH0_LSB 4
-#define CH1_MSB 5
-#define CH1_LSB 6
+
 
 
 uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; ///< Buffer for the slave device
@@ -40,29 +37,13 @@ int main(void){
     // Start the components
     ADC_DelSig_Start();
     AMux_Start() ;
-    UART_Start();
+    
     EZI2C_Start();
     PGA_TEMP_Start();
     isr_ADC_StartEx(Custom_ISR_ADC);
 
     Timer_ADC_Start();
-    Timer_DATA_Start();
-
-
-    Pin_LED_Write(0);
-    // Set up header and tail of Ph sensor buffer
-    DataBufferPh[0] = 0xA0;
-    DataBufferPh[TRANSMIT_BUFFER_SIZE_SINGLE-1] = 0xC0;
-
-    // Set up header and tail of Temp sensor buffer
-    DataBufferTemp[0] = 0xA0;
-    DataBufferTemp[TRANSMIT_BUFFER_SIZE_SINGLE-1] = 0xC0;
-
-    // Set up header and tail of sensors buffer
-    DataBufferDouble[0] = 0xA0;
-    DataBufferDouble[TRANSMIT_BUFFER_SIZE_DOUBLE-1] = 0xC0;
-
-
+    
 
     // Start the ADC conversion
     ADC_DelSig_StartConvert(); 
@@ -76,12 +57,11 @@ int main(void){
     slaveBuffer[POS_WHO_AM_I] = 0xBC;
     
     //Set to zero registers of the variables
-    slaveBuffer[CH0_MSB] = 0xFF;
-    slaveBuffer[CH0_LSB] = 0x22;
+    slaveBuffer[CH0_MSB] = 0x00;
+    slaveBuffer[CH0_LSB] = 0x00;
     
-    slaveBuffer[CH1_MSB] = 0xFF;
-    slaveBuffer[CH1_LSB] = 0x22;
-    
+    slaveBuffer[CH1_MSB] = 0x00;
+    slaveBuffer[CH1_LSB] = 0x00;
     
     
     // Set up EZI2C buffer
@@ -89,7 +69,7 @@ int main(void){
     // Set up control register 1
     slaveBuffer[CONTROL_REG1]=10;
 
-
+    Pin_LED_Write(0);
 
     for(;;)
     {

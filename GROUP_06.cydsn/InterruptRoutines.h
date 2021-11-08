@@ -10,22 +10,20 @@
  * ========================================
 */
 #ifndef __INTERRUPT_ROUTINES_H
-#define __INTERRUPT_ROUTINES_H
-#include "cytypes.h"
-#include "stdio.h"
-#define BYTE_TO_SEND_DOUBLE 4
-#define TRANSMIT_BUFFER_SIZE_DOUBLE 1+BYTE_TO_SEND_DOUBLE+1
-#define BYTE_TO_SEND_SINGLE 2
-#define TRANSMIT_BUFFER_SIZE_SINGLE 1+BYTE_TO_SEND_SINGLE+1
+    #define __INTERRUPT_ROUTINES_H
+    #include "cytypes.h"
+    #include "stdio.h"
+    #define BYTE_TO_SEND_DOUBLE 4
+    #define TRANSMIT_BUFFER_SIZE_DOUBLE 1+BYTE_TO_SEND_DOUBLE+1
+    #define BYTE_TO_SEND_SINGLE 2
+    #define TRANSMIT_BUFFER_SIZE_SINGLE 1+BYTE_TO_SEND_SINGLE+1
+    #define CH0_MSB 3
+    #define CH0_LSB 4
+    #define CH1_MSB 5
+    #define CH1_LSB 6
 
-    
-CY_ISR_PROTO (Custom_ISR_ADC);
+    CY_ISR_PROTO (Custom_ISR_ADC);
 
 
-uint8_t DataBufferPh[TRANSMIT_BUFFER_SIZE_SINGLE];
-uint8_t DataBufferTemp[TRANSMIT_BUFFER_SIZE_SINGLE];
-uint8_t DataBufferDouble[TRANSMIT_BUFFER_SIZE_DOUBLE];
-
-volatile uint8 PacketReadyFlag;
 #endif
 /* [] END OF FILE */

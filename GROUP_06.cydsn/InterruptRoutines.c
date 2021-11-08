@@ -42,8 +42,8 @@ CY_ISR(Custom_ISR_ADC)
 {
     Timer_ADC_ReadStatusRegister();
 
-// Update status
-   if ( slaveBuffer[CONTROL_REG0] == STATO0 && status!=0 )
+    // Update status
+    if ( slaveBuffer[CONTROL_REG0] == STATO0 && status!=0 )
     {
        status=0;
        Pin_LED_Write(0);
@@ -69,58 +69,56 @@ CY_ISR(Custom_ISR_ADC)
     }; 
 
    
- //conteggio campioni effettuati
+     //conteggio campioni effettuati
     counter_SP++;
     
     
-//select the Temp channel  
+    //select the Temp channel  
 
-if (status==1 || status==3 ){
-AMux_FastSelect(CH_TEMP) ;
-// Read Timer status register to bring interrupt line low
-value_digit = ADC_DelSig_Read32();
-if (value_digit < 0) value_digit = 0;
-if (value_digit > 65535) value_digit = 65535;
-value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);// the sensibility is 10 mV\c
-Temp_mean=Temp_mean+value_temp;}
-
-
-if (status==2 || status==3 ){
-//select the Photodiode channel
-AMux_FastSelect(CH_PH) ;
-// Read Timer status register to bring interrupt line low
-value_digit = ADC_DelSig_Read32();
-if (value_digit < 0) value_digit = 0;
-if (value_digit > 65535) value_digit = 65535;
-value_ph= ADC_DelSig_CountsTo_mVolts(value_digit);//da trovare il datasheet
-Ph_mean=Ph_mean+value_ph;
+    if (status==1 || status==3 ){
+        AMux_FastSelect(CH_TEMP) ;
+        // Read Timer status register to bring interrupt line low
+        value_digit = ADC_DelSig_Read32();
+        if (value_digit < 0) 
+            value_digit = 0;
+        if (value_digit > 65535) 
+            value_digit = 65535;
+        value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);// the sensibility is 10 mV\c
+        Temp_mean=Temp_mean+value_temp;}
 
 
-}
+    if (status==2 || status==3 ){
+        //select the Photodiode channel
+        AMux_FastSelect(CH_PH) ;
+        // Read Timer status register to bring interrupt line low
+        value_digit = ADC_DelSig_Read32();
+        if (value_digit < 0) 
+            value_digit = 0;
+        if (value_digit > 65535) 
+            value_digit = 65535;   
+        value_ph= ADC_DelSig_CountsTo_mVolts(value_digit);//da trovare il datasheet
+        Ph_mean=Ph_mean+value_ph;
 
 
-if (counter_SP==NUMBER_OF_SAMPLES){
-// Format ADC result for transmition
-Ph_mean=Ph_mean/NUMBER_OF_SAMPLES; //average of 5 samples
-Temp_mean=Temp_mean/NUMBER_OF_SAMPLES;
-// Write bytes in buffer
-DataBufferPh[1] = Ph_mean >> 8;
-DataBufferPh[2] = Ph_mean & 0xFF;
+    }
 
-DataBufferTemp[1] = Temp_mean >> 8;
-DataBufferTemp[2] = Temp_mean & 0xFF;
 
-DataBufferDouble[1] = Ph_mean >> 8;
-DataBufferDouble[2] = Ph_mean & 0xFF;
-DataBufferDouble[3] = Temp_mean >> 8;
-DataBufferDouble[4] = Temp_mean & 0xFF;
-counter_SP=0;
-Temp_mean=0;
-Ph_mean=0;
-}
+    if (counter_SP==NUMBER_OF_SAMPLES){
+        // Format ADC result for transmition
+        Ph_mean=Ph_mean/NUMBER_OF_SAMPLES; //average of 5 samples
+        Temp_mean=Temp_mean/NUMBER_OF_SAMPLES;
+        // Write bytes in buffer
+    
+        slaveBuffer[CH0_MSB] = Ph_mean >> 8;
+        slaveBuffer[CH0_LSB] = Ph_mean & 0xFF;
+        slaveBuffer[CH1_MSB] = Temp_mean >> 8;
+        slaveBuffer[CH1_LSB] = Temp_mean & 0xFF;
+        counter_SP=0;
+        Temp_mean=0;
+        Ph_mean=0;
+    }
 
 }
  
-
 
 /* [] END OF FILE */
