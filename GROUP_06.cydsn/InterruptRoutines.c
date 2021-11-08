@@ -37,6 +37,7 @@ int32 counter_SP=0; //counter dei campioni
 // Our global variables
 extern uint8_t status;
 extern uint8_t slaveBuffer[]; 
+
 CY_ISR(Custom_ISR_ADC)
 {
     Timer_ADC_ReadStatusRegister();
@@ -60,7 +61,7 @@ CY_ISR(Custom_ISR_ADC)
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO3 && status!=3) 
+    if ( slaveBuffer[CONTROL_REG0] == STATO3 && status!=3 ) 
     
     {
        status=3;
@@ -71,12 +72,8 @@ CY_ISR(Custom_ISR_ADC)
  //conteggio campioni effettuati
     counter_SP++;
     
-    //c++;
-    //if(c%50==0){Pin_LED_Write(x); 
-    //        if(x==0){x=1;}
-    //        else{x=0;}}
     
-//select the Temp channel   RISOLVERE PROBLEMA SENSORE DIFETTOSO
+//select the Temp channel  
 
 if (status==1 || status==3 ){
 AMux_FastSelect(CH_TEMP) ;
