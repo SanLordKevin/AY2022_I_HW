@@ -12,8 +12,6 @@
 #define CH_TEMP 0
 #define CH_PH 1
 #define NUMBER_OF_SAMPLES 5
-#define CONTROL_REG0 0
-#define CONTROL_REG1 1
 #define STATO0 0b00010100   //This is 14 in exidecimal notation 
 #define STATO1 0b00010101   //This is 15 in exidecimal notation 
 #define STATO2 0b00010110   //This is 16 in exidecimal notation 
@@ -25,13 +23,16 @@
 // Include required header files
 #include "project.h"
 
-// Variables declaration */
-int32 value_digit; //support variable for ADC sampling
-int32 value_temp;
+// Variables declaration
+//support variable for ADC sampling
+int32 value_digit; 
+//support variables for temperature and lux 
+int32 value_temp;  
 int32 value_ph;
 int32 Temp_mean;
 int32 Ph_mean;
-int32 counter_SP=0; // sampling counter
+//counter for the 
+int32 counter_SP=0; 
 
 
 
@@ -43,7 +44,7 @@ CY_ISR(Custom_ISR_ADC)
 {
     Timer_ADC_ReadStatusRegister();
 
-    // Update status
+    // Update status according to option written in the control register 0
     if ( slaveBuffer[CONTROL_REG0] == STATO0 && status!=0 )
     {
        status=0;
@@ -72,11 +73,10 @@ CY_ISR(Custom_ISR_ADC)
      //incremental counter of the sample effectuated
     counter_SP++;
     
-    
-    //select the Temp channel  
 
     if (status==1 || status==3 )
-    {
+    {   
+        //select the Temp channel
         AMux_FastSelect(CH_TEMP) ;
         // Read Timer status register to bring interrupt line low
         value_digit = ADC_DelSig_Read32();
@@ -91,7 +91,7 @@ CY_ISR(Custom_ISR_ADC)
 
     if (status==2 || status==3 )
     {
-        //select the Photodiode channel
+        //select the Photoresistor channel
         AMux_FastSelect(CH_PH) ;
         // Read Timer status register to bring interrupt line low
         value_digit = ADC_DelSig_Read32();
@@ -104,7 +104,7 @@ CY_ISR(Custom_ISR_ADC)
 
     }
 
-
+    //when acquired the correct number of samples do the mean and put values in the buffer
     if (counter_SP==NUMBER_OF_SAMPLES)
     {
         // Format ADC result for transmition
@@ -117,9 +117,9 @@ CY_ISR(Custom_ISR_ADC)
         slaveBuffer[CH1_MSB] = Ph_mean >> 8;
         slaveBuffer[CH1_LSB] = Ph_mean & 0xFF;
         
-        counter_SP=0;
-        Temp_mean=0;
-        Ph_mean=0;
+        counter_SP=0; //reset number of value collected
+        Temp_mean=0;  //reset temp mean
+        Ph_mean=0;    //reset lux mean
     }
 
 }

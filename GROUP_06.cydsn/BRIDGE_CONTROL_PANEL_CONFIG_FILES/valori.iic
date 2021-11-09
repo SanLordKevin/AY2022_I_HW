@@ -1,0 +1,31 @@
+w 08 00 14 p
+
+
+
+w 08 00 15 p
+
+w 08 03 p
+r 08 @1temp p
+w 08 04 p
+r 08 @0temp p
+
+
+
+w 08 00 16 p
+
+w 08 05 p
+r 08 @1lux p
+w 08 06 p
+r 08 @0lux p
+
+
+w 08 00 17 p
+
+w 08 03 p
+r 08 @1temp p
+w 08 04 p
+r 08 @0temp p 
+w 08 05 p
+r 08 @1lux p
+w 08 06 p
+r 08 @0lux p

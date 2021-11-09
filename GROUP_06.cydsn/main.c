@@ -9,16 +9,14 @@
 #include "InterruptRoutines.h"
 
 #define SLAVE_BUFFER_SIZE 8
-#define CONTROL_REG0 0
-#define CONTROL_REG1 1
-#define POS_WHO_AM_I 2 //register who am i address
+#define POS_WHO_AM_I 2 //position of register who am i  in the slave buffer
 
 uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; /// Buffer for the slave device
-uint8_t status=0; ///control status 0)off 1)CH temp on 2)CH ph on 3) Both on
-int16 period=10; //variable that read from the control register 1 the period of the sampling
+uint8_t status=0; ///control status 0)off  1) CH temp on  2) CH ph on  3) Both on
+int16 period=10; //variable red from the control register 1 the period of the sampling
 
 int main(void){
-    CyGlobalIntEnable; // Enable global interrupts. 
+    CyGlobalIntEnable; // Enable global interrupts 
     // Start the components
     ADC_DelSig_Start();
     AMux_Start() ;
@@ -32,17 +30,17 @@ int main(void){
 
     // Set up Slave Buffer
     slaveBuffer[CONTROL_REG0] = 0b00010100; //bit[1:0]-->STATUS (default status is 00)
-                                            //bit[5:2]-->NUMER OF SAMPLES FOR THE MEAN
+                                            //bit[5:2]-->NUMBER OF SAMPLES FOR THE MEAN
                                             
     
     // Set up who am i register
     slaveBuffer[POS_WHO_AM_I] = 0xBC;
     
     //Set to zero registers of the variables
-    slaveBuffer[CH0_MSB] = 0x00;
+    slaveBuffer[CH0_MSB] = 0x00; //temp
     slaveBuffer[CH0_LSB] = 0x00;
     
-    slaveBuffer[CH1_MSB] = 0x00;
+    slaveBuffer[CH1_MSB] = 0x00; //lux
     slaveBuffer[CH1_LSB] = 0x00;
     
     
@@ -50,7 +48,8 @@ int main(void){
     EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
     // Set up control register 1
     slaveBuffer[CONTROL_REG1]=10;
-
+    
+    //set led off
     Pin_LED_Write(0);
 
     for(;;)
