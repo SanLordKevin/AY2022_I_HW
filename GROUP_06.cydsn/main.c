@@ -23,7 +23,6 @@ int main(void){
     AMux_Start() ;
     EZI2C_Start();
     PGA_TEMP_Start();
-    isr_ADC_StartEx(Custom_ISR_ADC);
     Timer_ADC_Start();
 
     // Start the ADC conversion
@@ -49,6 +48,10 @@ int main(void){
     EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
     // Set up control register 1
     slaveBuffer[CONTROL_REG1]=10;
+    
+    //inizializzo la isr
+    isr_ADC_StartEx(Custom_ISR_ADC);
+    
     
     //set led off
     Pin_LED_Write(0);

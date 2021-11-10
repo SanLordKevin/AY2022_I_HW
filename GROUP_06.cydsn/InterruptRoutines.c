@@ -50,24 +50,34 @@ CY_ISR(Custom_ISR_ADC)
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 )
     {
        status=0;
+       Timer_ADC_Sleep();
+       ADC_DelSig_Sleep();
        Pin_LED_Write(0);
     };
+    
+    
     
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO1 && status!=1 ) 
     {
        status=1;
+       Timer_ADC_Wakeup();
+       ADC_DelSig_Wakeup();
        Pin_LED_Write(0);
     };
     
     if ((slaveBuffer[CONTROL_REG0] & 0b11) == STATO2 && status!=2 ) 
     {
        status=2;
+       Timer_ADC_Wakeup();
+       ADC_DelSig_Wakeup();
        Pin_LED_Write(0);
     };
     
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO3 && status!=3 ) 
     {
        status=3;
+       Timer_ADC_Wakeup();
+       ADC_DelSig_Wakeup();        
        Pin_LED_Write(1);
     }; 
 
