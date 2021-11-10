@@ -55,7 +55,12 @@ int main(void){
 
     for(;;)
     {
-       
+       if (period != slaveBuffer[CONTROL_REG1]) //control if the period has changed
+          {
+            period=10*slaveBuffer[CONTROL_REG1]; //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
+                                                 //With a clock set at 10 kHz to have an interrupt every 1ms you set the period of the timer to 10
+            Timer_ADC_WritePeriod(period);       //set the new period
+          }
     
     }
 }   
