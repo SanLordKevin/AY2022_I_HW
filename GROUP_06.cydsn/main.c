@@ -13,8 +13,8 @@
 
 uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; /// Buffer for the slave device
 uint8_t status=0; ///control status 0)off  1) CH temp on  2) CH ph on  3) Both on
-int16 period=10; //variable red from the control register 1 the period of the sampling
-int number_samples;
+int16 period=10; //variable that read from the control register 1 the period of the sampling
+int number_samples; //variable that read from the control register 0 the number of samples with which you do the average
 
 int main(void){
     CyGlobalIntEnable; // Enable global interrupts 
