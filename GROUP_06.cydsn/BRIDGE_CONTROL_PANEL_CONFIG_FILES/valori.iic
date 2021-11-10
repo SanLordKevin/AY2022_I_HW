@@ -1,28 +1,31 @@
-set_scan_period_to_20ms_to_read_data_at_50Hz
-
-command_to_send_to_stop_the_transmission
 w 08 00 14 p
 
 
-command_to_send_to_start_the_sampling_of_the_temperature
+
 w 08 00 15 p
 
-commands_to_repeat_to_acquire_values_of_the_temperature
 w 08 03 p
-r 08 @1temp @0temp p
+r 08 @1temp p
+w 08 04 p
+r 08 @0temp p
 
 
-command_to_send_to_start_the_sampling_of_the_lux
+
 w 08 00 16 p
 
-commands_to_repeat_to_acquire_values_of_the_lux
 w 08 05 p
-r 08 @1lux  08 @0lux p
+r 08 @1lux p
+w 08 06 p
+r 08 @0lux p
 
 
-command_to_send_to_start_the_sampling_of_both_sensors
 w 08 00 17 p
 
-commands_to_repeat_to_acquire_values_of_both_sensors
 w 08 03 p
-r 08 @1temp @0temp @1lux  @0lux p
+r 08 @1temp p
+w 08 04 p
+r 08 @0temp p 
+w 08 05 p
+r 08 @1lux p
+w 08 06 p
+r 08 @0lux p

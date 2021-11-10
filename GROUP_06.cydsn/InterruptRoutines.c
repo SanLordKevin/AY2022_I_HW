@@ -11,11 +11,11 @@
 */
 #define CH_TEMP 0
 #define CH_PH 1
-#define NUMBER_OF_SAMPLES 5
-#define STATO0 0b00010100   //This is 14 in exidecimal notation 
-#define STATO1 0b00010101   //This is 15 in exidecimal notation 
-#define STATO2 0b00010110   //This is 16 in exidecimal notation 
-#define STATO3 0b00010111   //This is 17 in exidecimal notation 
+//#define NUMBER_OF_SAMPLES 5
+#define STATO0 0b00000000   //This is 14 in exidecimal notation 
+#define STATO1 0b00000001   //This is 15 in exidecimal notation 
+#define STATO2 0b00000010   //This is 16 in exidecimal notation 
+#define STATO3 0b00000011   //This is 17 in exidecimal notation 
 //To select the status you write in the control register 0 in exidecimal notation using bridge control
 
 // Include header
@@ -39,31 +39,33 @@ int32 counter_SP=0;
 // Our global variables
 extern uint8_t status;
 extern uint8_t slaveBuffer[]; 
+extern int number_samples;
+ 
 
 CY_ISR(Custom_ISR_ADC)
 {
     Timer_ADC_ReadStatusRegister();
 
     // Update status according to option written in the control register 0
-    if ( slaveBuffer[CONTROL_REG0] == STATO0 && status!=0 )
+    if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 )
     {
        status=0;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO1 && status!=1 ) 
+    if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO1 && status!=1 ) 
     {
        status=1;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO2 && status!=2 ) 
+    if ((slaveBuffer[CONTROL_REG0] & 0b11) == STATO2 && status!=2 ) 
     {
        status=2;
        Pin_LED_Write(0);
     };
     
-    if ( slaveBuffer[CONTROL_REG0] == STATO3 && status!=3 ) 
+    if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO3 && status!=3 ) 
     {
        status=3;
        Pin_LED_Write(1);
@@ -105,11 +107,11 @@ CY_ISR(Custom_ISR_ADC)
     }
 
     //when acquired the correct number of samples do the mean and put values in the buffer
-    if (counter_SP==NUMBER_OF_SAMPLES)
+    if (counter_SP==number_samples)
     {
         // Format ADC result for transmition
-        Ph_mean=Ph_mean/NUMBER_OF_SAMPLES; //average of 5 samples
-        Temp_mean=Temp_mean/NUMBER_OF_SAMPLES;
+        Ph_mean=Ph_mean/number_samples; //average of 5 samples
+        Temp_mean=Temp_mean/number_samples;
         
         // Write bytes in buffer
         slaveBuffer[CH0_MSB] = Temp_mean >> 8;

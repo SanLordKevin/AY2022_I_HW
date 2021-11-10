@@ -14,6 +14,7 @@
 uint8_t slaveBuffer[SLAVE_BUFFER_SIZE]; /// Buffer for the slave device
 uint8_t status=0; ///control status 0)off  1) CH temp on  2) CH ph on  3) Both on
 int16 period=10; //variable red from the control register 1 the period of the sampling
+int number_samples;
 
 int main(void){
     CyGlobalIntEnable; // Enable global interrupts 
@@ -47,17 +48,23 @@ int main(void){
     // Set up EZI2C buffer
     EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
     // Set up control register 1
-    slaveBuffer[CONTROL_REG1]=40; //Period of the timer that gave us a frequency of 250 Hz
-                                  //This frequency is the minimum necessary to sample 5 times before transmission
+    slaveBuffer[CONTROL_REG1]=10;
     
     //set led off
     Pin_LED_Write(0);
 
     for(;;)
     {
-       if (period != slaveBuffer[CONTROL_REG1]) //control if the period has changed
+        if (period != slaveBuffer[CONTROL_REG1]) //control if the period has changed
           {
             period=10*slaveBuffer[CONTROL_REG1]; //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
+                                                 //With a clock set at 10 kHz to have an interrupt every 1ms you set the period of the timer to 10
+            Timer_ADC_WritePeriod(period);       //set the new period
+          }
+        
+        if ( number_samples!=(slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2) //control if the period has changed
+          {
+             number_samples=(slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2;  //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
                                                  //With a clock set at 10 kHz to have an interrupt every 1ms you set the period of the timer to 10
             Timer_ADC_WritePeriod(period);       //set the new period
           }
