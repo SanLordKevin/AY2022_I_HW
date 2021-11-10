@@ -49,7 +49,7 @@ int main(void){
     // Set up control register 1
     slaveBuffer[CONTROL_REG1]=10;
     
-    //inizializzo la isr
+    //initilize the isr
     isr_ADC_StartEx(Custom_ISR_ADC);
     
     
@@ -60,14 +60,14 @@ int main(void){
     {
         if (period != slaveBuffer[CONTROL_REG1]) //control if the period has changed
           {
-            period=10*slaveBuffer[CONTROL_REG1]; //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
+            period = 10*slaveBuffer[CONTROL_REG1]; //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
                                                  //With a clock set at 10 kHz to have an interrupt every 1ms you set the period of the timer to 10
             Timer_ADC_WritePeriod(period);       //set the new period
           }
         
-        if ( number_samples!=(slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2) //control if the number of samples has changed
+        if ( number_samples != (slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2) //control if the number of samples has changed
           {
-             number_samples=((slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2);  //set the new value of the number of samples to averaged
+             number_samples = ((slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2);  //set the new value of the number of samples to averaged
             
           }
     
