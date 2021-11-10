@@ -65,11 +65,10 @@ int main(void){
             Timer_ADC_WritePeriod(period);       //set the new period
           }
         
-        if ( number_samples!=(slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2) //control if the period has changed
+        if ( number_samples!=(slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2) //control if the number of samples has changed
           {
-             number_samples=(slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2;  //The user write the period in ms;The period of the timer, instead, is the number of count before th overflow.
-                                                 //With a clock set at 10 kHz to have an interrupt every 1ms you set the period of the timer to 10
-            Timer_ADC_WritePeriod(period);       //set the new period
+             number_samples=((slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2);  //set the new value of the number of samples to averaged
+            
           }
     
     }
