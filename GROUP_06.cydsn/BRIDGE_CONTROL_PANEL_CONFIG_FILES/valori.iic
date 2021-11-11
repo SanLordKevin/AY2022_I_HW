@@ -28,5 +28,6 @@ w 08 00 17 p
 w 08 03 p
 r 08 @1temp @0temp @1lux  @0lux p
 
-
-
+;per aggiornare il periodo di campionamento
+w 08 01 01 p ;per impostare il periodo 1 ms, 1kHz, frequenza massima di campionamento
+w 08 01 19 p ;per impostare il periodo a 25 ms, 40Hz, frequenza minima di campionamento
