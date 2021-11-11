@@ -6,11 +6,10 @@
 */
 #define CH_TEMP 0
 #define CH_PH 1
-//#define NUMBER_OF_SAMPLES 5
-#define STATO0 0b00000000   //This is 14 in exidecimal notation 
-#define STATO1 0b00000001   //This is 15 in exidecimal notation 
-#define STATO2 0b00000010   //This is 16 in exidecimal notation 
-#define STATO3 0b00000011   //This is 17 in exidecimal notation 
+#define STATO0 0b00000000   //This is 0 in exidecimal notation 
+#define STATO1 0b00000001   //This is 01 in exidecimal notation 
+#define STATO2 0b00000010   //This is 02 in exidecimal notation 
+#define STATO3 0b00000011   //This is 03 in exidecimal notation 
 //To select the status you write in the control register 0 in exidecimal notation using bridge control
 
 // Include header
@@ -26,7 +25,7 @@ int32 value_temp;
 int32 value_ph;
 int32 Temp_mean;
 int32 Ph_mean;
-//counter for the 
+//counter for the sampling
 int32 counter_SP=0; 
 
 
@@ -42,7 +41,7 @@ CY_ISR(Custom_ISR_ADC)
     Timer_ADC_ReadStatusRegister();
 
     // Update status according to option written in the control register 0
-    if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 )
+    if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 ) // use of  mask to identify teh first two bits and than compare with status 0
     {
         status=0;
         ADC_DelSig_Sleep(); //put the ADC on sleep if unusued
@@ -70,7 +69,7 @@ CY_ISR(Custom_ISR_ADC)
     {
         ADC_DelSig_Wakeup();
         status=3;
-        Pin_LED_Write(1);
+        Pin_LED_Write(1); //led switch on at status 11 as per requirements
     }; 
 
    
@@ -78,17 +77,17 @@ CY_ISR(Custom_ISR_ADC)
     counter_SP++;
     
 
-    if (status==1 || status==3 )
+    if (status==1 || status==3 ) // sampling of the temperature if the statu is equal to 1 or 3
     {   
         //select the Temp channel
         AMux_FastSelect(CH_TEMP) ;
-        // Read Timer status register to bring interrupt line low
+       //read the ADC
         value_digit = ADC_DelSig_Read32();
-        if (value_digit < 0) 
+        if (value_digit < 0) //if value is below the minimum value that of the ADC output 
             value_digit = 0;
         if (value_digit > 65535) 
             value_digit = 65535;
-        value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);
+        value_temp = ADC_DelSig_CountsTo_mVolts(value_digit);// tranformation from digits to millivolt
         Temp_mean=Temp_mean+value_temp;
     }
 
@@ -97,7 +96,7 @@ CY_ISR(Custom_ISR_ADC)
     {
         //select the Photoresistor channel
         AMux_FastSelect(CH_PH) ;
-        // Read Timer status register to bring interrupt line low
+        //read the ADC
         value_digit = ADC_DelSig_Read32();
         if (value_digit < 0) 
             value_digit = 0;
