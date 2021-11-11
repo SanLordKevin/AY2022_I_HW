@@ -1,11 +1,6 @@
 /* ========================================
- *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
- *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
+ * Casali Federico
+ * Sangalli Kevin
  *
  * ========================================
 */
@@ -49,36 +44,33 @@ CY_ISR(Custom_ISR_ADC)
     // Update status according to option written in the control register 0
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 )
     {
-       status=0;
-       Timer_ADC_Sleep();
-       ADC_DelSig_Sleep();
-       Pin_LED_Write(0);
+        status=0;
+        ADC_DelSig_Sleep(); //put the ADC on sleep if unusued
+        Pin_LED_Write(0);
     };
     
     
     
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO1 && status!=1 ) 
     {
-       status=1;
-       Timer_ADC_Wakeup();
-       ADC_DelSig_Wakeup();
-       Pin_LED_Write(0);
+        ADC_DelSig_Wakeup();
+        status=1;
+        Pin_LED_Write(0);
     };
     
     if ((slaveBuffer[CONTROL_REG0] & 0b11) == STATO2 && status!=2 ) 
     {
-       status=2;
-       Timer_ADC_Wakeup();
-       ADC_DelSig_Wakeup();
-       Pin_LED_Write(0);
+       
+        ADC_DelSig_Wakeup();
+        status=2;
+        Pin_LED_Write(0);
     };
     
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO3 && status!=3 ) 
     {
-       status=3;
-       Timer_ADC_Wakeup();
-       ADC_DelSig_Wakeup();        
-       Pin_LED_Write(1);
+        ADC_DelSig_Wakeup();
+        status=3;
+        Pin_LED_Write(1);
     }; 
 
    
@@ -117,10 +109,10 @@ CY_ISR(Custom_ISR_ADC)
     }
 
     //when acquired the correct number of samples do the mean and put values in the buffer
-    if (counter_SP==number_samples)
+    if (counter_SP == number_samples && status != 0)
     {
         // Format ADC result for transmition
-        Ph_mean=Ph_mean/number_samples; //average of 5 samples
+        Ph_mean=Ph_mean/number_samples; //average of samples
         Temp_mean=Temp_mean/number_samples;
         
         // Write bytes in buffer

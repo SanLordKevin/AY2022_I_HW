@@ -29,7 +29,7 @@ int main(void){
     ADC_DelSig_StartConvert(); 
 
     // Set up Slave Buffer
-    slaveBuffer[CONTROL_REG0] = 0b00010100; //bit[1:0]-->STATUS (default status is 00)
+    slaveBuffer[CONTROL_REG0] = 0b00000000; //bit[1:0]-->STATUS (default status is 00)
                                             //bit[5:2]-->NUMBER OF SAMPLES FOR THE MEAN
                                             
     

@@ -1,10 +1,12 @@
-;per mandare il giusto comando esadecimale devo prima lavorare in binrio considerando che
-;i prmi due bit sono utilizzati per il cambiamento dello stato mentre dal 3 al quinto bit per 
+;per mandare il giusto comando esadecimale devo prima lavorare in binario considerando che
+;i primi due bit sono utilizzati per il cambiamento dello stato mentre dal terzo al quinto bit per 
 ;modificare il numero di campioni utilizzati per la media
 ;In questo caso utilizzzo 5 campioni e cambio gli stati 
+
+;comando per fermare il campionamento e l'aggiornamento dei dati
 w 08 00 14 p
 
-;Stato 01
+;Stato 01, temperatura
 w 08 00 15 p
 
 ;leggo la temperatura dal registro 03 e 04
@@ -12,16 +14,19 @@ w 08 03 p
 r 08 @1temp @0temp p
 
 
-;stato 10
+;stato 10, luminosit‡
 w 08 00 16 p
 
-;leggo la la luminosit√† dal registro 05 e 06
+;leggo la luminosit‡† dal registro 05 e 06
 w 08 05 p
 r 08 @1lux  @0lux p
 
-;stato 11
+;stato 11, attivo entrambi
 w 08 00 17 p
 
-;leggo la temperatura e la luminosit√† dal registro 03 al registro 06
+;leggo la temperatura e la luminosit‡† dal registro 03 al registro 06
 w 08 03 p
 r 08 @1temp @0temp @1lux  @0lux p
+
+
+
