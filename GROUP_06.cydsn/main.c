@@ -49,8 +49,7 @@ int main(void){
     // Set up EZI2C buffer
     EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
 
-    
-    //initilize the isr
+    //start the isr
     isr_ADC_StartEx(Custom_ISR_ADC);
     
     
@@ -73,4 +72,5 @@ int main(void){
     
     }
 }   
-/* [] END OF FILE PROVA*/
+
+/* [] END OF FILE */

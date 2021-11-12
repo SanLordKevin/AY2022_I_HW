@@ -42,7 +42,7 @@ CY_ISR(Custom_ISR_ADC)
 
     // Update status according to option written in the control register 0
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 ) // use of  mask to identify teh first two bits and than compare with status 0
-    {
+    {   
         status=0;
         Pin_LED_Write(0);
     };
@@ -58,7 +58,6 @@ CY_ISR(Custom_ISR_ADC)
     if ((slaveBuffer[CONTROL_REG0] & 0b11) == STATO2 && status!=2 ) 
     {
        
-        ADC_DelSig_Wakeup();
         status=2;
         Pin_LED_Write(0);
     };
@@ -89,7 +88,7 @@ CY_ISR(Custom_ISR_ADC)
     }
 
 
-    if (status==2 || status==3 )
+    if (status==2 || status==3 )  // sampling of the luminosity if the statu is equal to 1 or 3
     {
         //select the Photoresistor channel
         AMux_FastSelect(CH_PH) ;

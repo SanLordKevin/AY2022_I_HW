@@ -3,7 +3,7 @@
 ;modificare il numero di campioni utilizzati per la media
 ;In questo caso utilizzzo 5 campioni e cambio gli stati 
 
-;comando per fermare il campionamento e l'aggiornamento dei dati
+;comando per fermare il campionamento
 w 08 00 14 p
 
 ;Stato 01, temperatura
