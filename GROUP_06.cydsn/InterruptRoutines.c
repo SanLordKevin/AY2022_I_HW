@@ -44,7 +44,6 @@ CY_ISR(Custom_ISR_ADC)
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO0 && status!=0 ) // use of  mask to identify teh first two bits and than compare with status 0
     {
         status=0;
-        ADC_DelSig_Sleep(); //put the ADC on sleep if unusued
         Pin_LED_Write(0);
     };
     
@@ -52,7 +51,6 @@ CY_ISR(Custom_ISR_ADC)
     
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO1 && status!=1 ) 
     {
-        ADC_DelSig_Wakeup();
         status=1;
         Pin_LED_Write(0);
     };
@@ -67,7 +65,6 @@ CY_ISR(Custom_ISR_ADC)
     
     if ( (slaveBuffer[CONTROL_REG0] & 0b11) == STATO3 && status!=3 ) 
     {
-        ADC_DelSig_Wakeup();
         status=3;
         Pin_LED_Write(1); //led switch on at status 11 as per requirements
     }; 
@@ -108,7 +105,7 @@ CY_ISR(Custom_ISR_ADC)
     }
 
     //when acquired the correct number of samples do the mean and put values in the buffer
-    if (counter_SP == number_samples && status != 0)
+    if (counter_SP == number_samples)
     {
         // Format ADC result for transmition
         Ph_mean=Ph_mean/number_samples; //average of samples

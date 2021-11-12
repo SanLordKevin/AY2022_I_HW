@@ -29,8 +29,8 @@ int main(void){
     ADC_DelSig_StartConvert(); 
 
     // Set up Slave Buffer
-    slaveBuffer[CONTROL_REG0] = 0b00000000; //bit[1:0]-->STATUS (default status is 00)
-                                            //bit[5:2]-->NUMBER OF SAMPLES FOR THE MEAN
+    slaveBuffer[CONTROL_REG0] = 0b00101000; //bit[1:0]-->STATUS (default status is 00)
+                                            //bit[5:2]-->NUMBER OF SAMPLES FOR THE MEAN, initialized at 5 samples
                                             
     
     // Set up who am i register
@@ -44,7 +44,7 @@ int main(void){
     slaveBuffer[CH1_LSB] = 0x00;
     
     // Set up control register 1
-    slaveBuffer[CONTROL_REG1]=10;
+    slaveBuffer[CONTROL_REG1]=1;
     
     // Set up EZI2C buffer
     EZI2C_SetBuffer1(SLAVE_BUFFER_SIZE, SLAVE_BUFFER_SIZE - 1 ,slaveBuffer);
@@ -66,9 +66,9 @@ int main(void){
             Timer_ADC_WritePeriod(period);       //set the new period
           }
         
-        if ( number_samples != (slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2) //control if the number of samples has changed
+        if ( number_samples != ((slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2)) //control if the number of samples has changed
           {
-             number_samples = ((slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2);  //set the new value of the number of samples to be averaged
+             number_samples = (((slaveBuffer[CONTROL_REG0] & 0b00111100) >> 2));  //set the new value of the number of samples to be averaged
           }
     
     }
